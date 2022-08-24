@@ -1864,6 +1864,11 @@
     isomorphic-fetch "^3.0.0"
     regtest-client "^0.2.0"
 
+"@interlay/interbtc-index-client@^1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@interlay/interbtc-index-client/-/interbtc-index-client-1.6.2.tgz#3a8d1bb9341253b23b43f5f8ed7fa45e92683a25"
+  integrity sha512-dVaOEdMDhQmJEgZVdfA+iA+w6poat+WCJkU1ccvMMlQfVVz2HPfSSL/XenLcg8otV0+RrOqSeo852fVu3SdI+A==
+
 "@interlay/interbtc-types@1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@interlay/interbtc-types/-/interbtc-types-1.8.0.tgz#4523521478663d31fee2d8a17f71578a1239a8b6"
