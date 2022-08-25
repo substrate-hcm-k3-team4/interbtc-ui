@@ -37,3 +37,30 @@ docker cp ./encoding.js "interbtc-ui_index_1":"/usr/src/node_modules/@interlay/i
 - Update to running container 'interbtc-ui_vault_1' and commit it with the image tag 'noux/interbtc-clients:vault-standalone-metadata-1-5-6-fixing"'.
 - Update docker-compose file use that image and the argument like this ```--wrapped-currency-id 'IBTC'```
 - Rerun docker-compose
+
+# A note
+## Error
+Log error from the running docker-compose like this:  
+```
+index_1        | [1661438902172] ERROR (error/31 on b320059c8c34): relation "parachain_events" does not exist
+index_1        |     error: relation "parachain_events" does not exist
+index_1        |         at Parser.parseErrorMessage (/usr/src/node_modules/pg-protocol/dist/parser.js:287:98)
+index_1        |         at Parser.handlePacket (/usr/src/node_modules/pg-protocol/dist/parser.js:126:29)
+index_1        |         at Parser.parse (/usr/src/node_modules/pg-protocol/dist/parser.js:39:38)
+index_1        |         at Socket.<anonymous> (/usr/src/node_modules/pg-protocol/dist/index.js:11:42)
+index_1        |         at Socket.emit (node:events:390:28)
+index_1        |         at addChunk (node:internal/streams/readable:315:12)
+index_1        |         at readableAddChunk (node:internal/streams/readable:289:9)
+index_1        |         at Socket.Readable.push (node:internal/streams/readable:228:10)
+index_1        |         at TCP.onStreamRead (node:internal/stream_base_commons:199:23)
+index_1        | error Command failed with exit code 255.
+index_1        | info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+```
+## Fixing
+That caused by node_modules which doesn't exist at the time of initializing docker containers. Thus, it should install node_modules first. Like this!
+```
+# first
+yarn install
+# second
+docker-compose --env-file .env.development.local up
+```
