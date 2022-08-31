@@ -255,6 +255,9 @@ const IssueForm = (): JSX.Element | null => {
       }
 
       if (bitcoinHeight - btcRelayHeight > BLOCKS_BEHIND_LIMIT) {
+        console.log('bitcoinHeight:', bitcoinHeight)
+        console.log('btcRelayHeight:', btcRelayHeight)
+        console.log(bitcoinHeight - btcRelayHeight)
         return t('issue_page.error_more_than_6_blocks_behind', {
           wrappedTokenSymbol: WRAPPED_TOKEN_SYMBOL
         });

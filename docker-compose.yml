@@ -1,8 +1,15 @@
 version: '3.8'
 services:
   interbtc:
-    image: "interlayhq/interbtc:interbtc-standalone-1.11.0"
-    command:
+    image: "interlayhq/interbtc:interbtc-standalone-1.12.1"
+    # command:
+    #   - interbtc-standalone
+    #   - --rpc-external
+    #   - --ws-external
+    #   - --rpc-methods
+    #   - Unsafe
+    #   - --dev
+    entrypoint:
       - interbtc-standalone
       - --rpc-external
       - --ws-external
@@ -39,6 +46,10 @@ services:
         ALICE_ADDRESS=$$(bitcoin-cli -regtest -rpcconnect=bitcoind -rpcwait -rpcuser=rpcuser -rpcpassword=rpcpassword -rpcwallet=Alice getnewaddress)
         # coins need 100 confirmations to be spendable
         bitcoin-cli -regtest -rpcconnect=bitcoind -rpcwait -rpcuser=rpcuser -rpcpassword=rpcpassword generatetoaddress 101 $${ALICE_ADDRESS}
+        sleep 3600
+    stdin_open: true
+    tty: true
+
   electrs:
     image: 'interlayhq/electrs:latest'
     command:
@@ -68,6 +79,9 @@ services:
       - 'ws://interbtc:9944'
       - --currency-id
       - ${DOCKER_RELAY_CHAIN_CURRENCY}
+      - INTR
+      - KSM
+      - KINT
       - --coingecko
       - "https://api.coingecko.com/api/v3/"
       - --blockstream
@@ -90,9 +104,28 @@ services:
     ports:
       - '3035:3035'
     restart: unless-stopped
-  vault:
-    # image: "interlayhq/interbtc-clients:vault-standalone-metadata-1-5-6"
-    image: "noux/interbtc-clients:vault-standalone-metadata-1-5-6-fixing"
+  # vault:
+  #   # image: "interlayhq/interbtc-clients:vault-standalone-metadata-1-5-6"
+  #   image: "noux/interbtc-clients:vault-standalone-metadata-1-5-6-fixing"
+  #   command:
+  #     - /bin/sh
+  #     - -c
+  #     - |
+  #         # charlie_stash
+  #         echo '{"vault_1": "0x66256c4e2f90e273bf387923a9a7860f2e9f47a1848d6263de512f7fb110fc08"}' > keyfile.json
+  #         echo "Sleeping..."
+  #         # sleep for 30s to wait for bitcoin to create the Charlie wallet
+  #         # and also to ensure that the issue period and redeem period are set
+  #         sleep 30
+  #         vault-standalone-metadata --keyfile="keyfile.json" --keyname="vault_1" --auto-register-with-collateral 1000000000000 --btc-parachain-url 'ws://interbtc:9944' --collateral-currency-id ${DOCKER_RELAY_CHAIN_CURRENCY} --wrapped-currency-id 'IBTC' --bitcoin-relay-start-height 1
+  #   environment: &client-env
+  #     BITCOIN_RPC_URL: http://bitcoind:18443
+  #     BITCOIN_RPC_USER: rpcuser
+  #     BITCOIN_RPC_PASS: rpcpassword
+  #     RUST_LOG: info
+  #   restart: unless-stopped
+  vault_1:
+    image: "interlayhq/interbtc-clients:vault-standalone-metadata-1-10-1"
     command:
       - /bin/sh
       - -c
@@ -103,7 +136,7 @@ services:
           # sleep for 30s to wait for bitcoin to create the Charlie wallet
           # and also to ensure that the issue period and redeem period are set
           sleep 30
-          vault-standalone-metadata --keyfile="keyfile.json" --keyname="vault_1" --auto-register-with-collateral 1000000000000 --btc-parachain-url 'ws://interbtc:9944' --collateral-currency-id ${DOCKER_RELAY_CHAIN_CURRENCY} --wrapped-currency-id 'IBTC' --bitcoin-relay-start-height 1
+          vault-standalone-metadata --keyfile="keyfile.json" --keyname="vault_1" --auto-register-with-collateral 1000000000000 --btc-parachain-url 'ws://interbtc:9944' --collateral-currency-id ${DOCKER_RELAY_CHAIN_CURRENCY}
     environment: &client-env
       BITCOIN_RPC_URL: http://bitcoind:18443
       BITCOIN_RPC_USER: rpcuser
