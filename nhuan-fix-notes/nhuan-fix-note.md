@@ -64,3 +64,10 @@ yarn install
 # second
 docker-compose --env-file .env.development.local up
 ```
+
+# A Note
+## Error
+UI feedback like this ```You can't issue IBTC at the moment because BTC parachain is more than 6 blocks behind.```
+## Fixing
+Must use ```yarn start-regtest``` in case of using with bitcoind in regtest mode. This leads the front-end connect to 'electrs' container instance as expected.
+
